@@ -1,0 +1,28 @@
+function doPost(e) {
+  try {
+    Logger.log(e.postData.contents);
+    var data = JSON.parse(e.postData.contents);
+    var name = data.name;
+    var number = data.number;
+    var email = data.email;
+    var level = data.level;
+
+    if (!name || !number || !email || !level) {
+      return ContentService.createTextOutput(
+        JSON.stringify({ status: 'error', message: 'Please fill out all fields.' })
+      ).setMimeType(ContentService.MimeType.JSON);
+    }
+
+    var sheet = SpreadsheetApp.openById('YOUR SHEET ID').getActiveSheet();
+    sheet.appendRow([name, number, email, level]);
+
+    return ContentService.createTextOutput(
+      JSON.stringify({ status: 'success' })
+    ).setMimeType(ContentService.MimeType.JSON);
+  } catch (error) {
+    Logger.log(error.message);
+    return ContentService.createTextOutput(
+      JSON.stringify({ status: 'error', message: 'An error occurred: ' + error.message })
+    ).setMimeType(ContentService.MimeType.JSON);
+  }
+}
